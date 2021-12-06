@@ -1,5 +1,6 @@
 package dev.wittek.tc.jakarta;
 
+import dev.wittek.tc.jakarta.book.Book;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeAll;
@@ -55,12 +56,26 @@ class AppIT {
     }
 
     @Test
-    void databaseInteractions() {
-        given(requestSpecification).log().all()
+    void canAddBook() {
+        given(requestSpecification)
                 .when()
                 .get("/book/list")
                 .then()
                 .statusCode(200).body("size()", equalTo(4));
+
+        given(requestSpecification)
+                .when()
+                .header("Content-Type", "application/json")
+                .body(new Book(4711L, "foo", "bar"))
+                .post("/book/add")
+                .then()
+                .statusCode(204);
+
+        given(requestSpecification)
+                .when()
+                .get("/book/list")
+                .then()
+                .statusCode(200).body("size()", equalTo(5));
     }
 
 }
