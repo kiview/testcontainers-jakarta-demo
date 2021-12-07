@@ -6,19 +6,16 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.utility.MountableFile;
 
 public abstract class AbstractIT {
 
     static Network network = Network.newNetwork();
 
-    @Container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:14")
             .withNetwork(network)
             .withNetworkAliases("postgres");
 
-    @Container
     static GenericContainer<?> jakartaApp = new GenericContainer<>("payara/micro:5.2021.9-jdk11")
             .withExposedPorts(8080)
             .withCopyFileToContainer(MountableFile.forHostPath("target/jakarta-tc.war"), "/opt/payara/deployments/jakarta-tc.war")
