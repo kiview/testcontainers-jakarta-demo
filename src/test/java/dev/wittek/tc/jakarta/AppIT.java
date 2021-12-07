@@ -56,12 +56,22 @@ class AppIT {
     }
 
     @Test
-    void canAddBook() {
+    void canQueryTuringAwardWinner() {
         given(requestSpecification)
+                .when()
+                .get("/turing")
+                .then()
+                .statusCode(200)
+                .body(equalTo("Alfred Aho, Jeffrey Ullman"));
+    }
+
+    @Test
+    void canAddBook() {
+        int numberOfBooks = given(requestSpecification)
                 .when()
                 .get("/book/list")
                 .then()
-                .statusCode(200).body("size()", equalTo(4));
+                .statusCode(200).extract().body().jsonPath().getInt("size()");
 
         given(requestSpecification)
                 .when()
@@ -75,7 +85,7 @@ class AppIT {
                 .when()
                 .get("/book/list")
                 .then()
-                .statusCode(200).body("size()", equalTo(5));
+                .statusCode(200).body("size()", equalTo(numberOfBooks + 1));
     }
 
 }
